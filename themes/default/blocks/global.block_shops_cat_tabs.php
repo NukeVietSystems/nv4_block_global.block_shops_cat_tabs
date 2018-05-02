@@ -78,35 +78,6 @@ if( ! nv_function_exists( 'nv_block_shops_block_cat_tabs' ) )
 			$html .= '</tr>';
 			$html .= '<td>' . $lang_block['blockid'] . '</td>';
 			$html .= '<td>';
-			/* $sql = 'SELECT catid, parentid, lev, ' . NV_LANG_DATA . '_title AS title, ' . NV_LANG_DATA . '_alias AS alias, viewcat, numsubcat, subcatid, numlinks, ' . NV_LANG_DATA . '_description AS description, inhome, ' . NV_LANG_DATA . '_keywords AS keywords, groups_view FROM ' . $db_config['prefix'] . '_shops_catalogs ORDER BY weight ASC';
-			$list = $db->query( $sql);
-			while( $l = $list->fetch() )
-			{
-				$nvs_array_cat_shops[$l['catid']] = array(
-					"catid" => $l['catid'],
-					"parentid" => $l['parentid'],
-					"title" => $l['title'],
-					"alias" => $l['alias'],
-					"viewcat" => $l['viewcat'],
-					"numsubcat" => $l['numsubcat'],
-					"subcatid" => $l['subcatid'],
-					"numlinks" => $l['numlinks'],
-					"description" => $l['description'],
-					"inhome" => $l['inhome'],
-					"keywords" => $l['keywords'],
-					"groups_view" => $l['groups_view'],
-					'lev' => $l['lev']
-				);
-				 $xtitle_i = '';
-				if( $l['lev'] > 0 )
-				{
-					for( $i = 1; $i <= $l['lev']; ++$i )
-					{
-						$xtitle_i .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-					}
-				}
-				$html .= $xtitle_i . '<label><input type="checkbox" name="config_blockid[]" value="' . $l['catid'] . '" ' . ( ( in_array( $l['catid'], $data_block['blockid'] ) ) ? ' checked="checked"' : '' ) . '</input>' . $l[NV_LANG_DATA.'_title'] . '</label><br />'; 
-			} */
 			$nvs_array_cat_shops = nvs_array_cat_shops($module, $lang_block);
 			foreach ($nvs_array_cat_shops as $cat) {
 				if ($cat['parentid'] == 0) {
