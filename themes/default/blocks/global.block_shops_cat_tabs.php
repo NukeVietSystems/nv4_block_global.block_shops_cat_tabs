@@ -33,6 +33,40 @@ if( ! nv_function_exists( 'nv_block_shops_block_cat_tabs' ) )
             return $html;
         }
     }
+	function nvs_array_cat_shops( $module, $lang_block )
+	{
+		global  $db,$db_config , $site_mods, $nv_Request;
+		$sql = 'SELECT catid, parentid, lev, ' . NV_LANG_DATA . '_title AS title, ' . NV_LANG_DATA . '_alias AS alias, viewcat, numsubcat, subcatid, numlinks, ' . NV_LANG_DATA . '_description AS description, inhome, ' . NV_LANG_DATA . '_keywords AS keywords, groups_view FROM ' . $db_config['prefix'] . '_shops_catalogs ORDER BY weight ASC';
+		$list = $db->query( $sql);
+		while( $l = $list->fetch() )
+		{
+			$nvs_array_cat_shops[$l['catid']] = array(
+				"catid" => $l['catid'],
+				"parentid" => $l['parentid'],
+				"title" => $l['title'],
+				"alias" => $l['alias'],
+				"viewcat" => $l['viewcat'],
+				"numsubcat" => $l['numsubcat'],
+				"subcatid" => $l['subcatid'],
+				"numlinks" => $l['numlinks'],
+				"description" => $l['description'],
+				"inhome" => $l['inhome'],
+				"keywords" => $l['keywords'],
+				"groups_view" => $l['groups_view'],
+				'lev' => $l['lev']
+			);
+			/* $xtitle_i = '';
+			if( $l['lev'] > 0 )
+			{
+				for( $i = 1; $i <= $l['lev']; ++$i )
+				{
+					$xtitle_i .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				}
+			}
+			$html .= $xtitle_i . '<label><input type="checkbox" name="config_blockid[]" value="' . $l['catid'] . '" ' . ( ( in_array( $l['catid'], $data_block['blockid'] ) ) ? ' checked="checked"' : '' ) . '</input>' . $l[NV_LANG_DATA.'_title'] . '</label><br />'; */
+		}
+		return $nvs_array_cat_shops;
+	}
 	function nv_block_config_shops_block_cat_tabs( $module, $data_block, $lang_block )
 	{
 		global  $db,$db_config , $site_mods, $nv_Request;
@@ -43,27 +77,27 @@ if( ! nv_function_exists( 'nv_block_shops_block_cat_tabs' ) )
 			$html .= '</td>';
 			$html .= '</tr>';
 			$html .= '<td>' . $lang_block['blockid'] . '</td>';
-			$sql = 'SELECT catid, parentid, lev, ' . NV_LANG_DATA . '_title AS title, ' . NV_LANG_DATA . '_alias AS alias, viewcat, numsubcat, subcatid, numlinks, ' . NV_LANG_DATA . '_description AS description, inhome, ' . NV_LANG_DATA . '_keywords AS keywords, groups_view FROM ' . $db_config['prefix'] . '_shops_catalogs ORDER BY weight ASC';
-			$list = $db->query( $sql);
 			$html .= '<td>';
+			/* $sql = 'SELECT catid, parentid, lev, ' . NV_LANG_DATA . '_title AS title, ' . NV_LANG_DATA . '_alias AS alias, viewcat, numsubcat, subcatid, numlinks, ' . NV_LANG_DATA . '_description AS description, inhome, ' . NV_LANG_DATA . '_keywords AS keywords, groups_view FROM ' . $db_config['prefix'] . '_shops_catalogs ORDER BY weight ASC';
+			$list = $db->query( $sql);
 			while( $l = $list->fetch() )
 			{
 				$nvs_array_cat_shops[$l['catid']] = array(
-                    "catid" => $l['catid'],
-                    "parentid" => $l['parentid'],
-                    "title" => $l['title'],
-                    "alias" => $l['alias'],
-                    "viewcat" => $l['viewcat'],
-                    "numsubcat" => $l['numsubcat'],
-                    "subcatid" => $l['subcatid'],
-                    "numlinks" => $l['numlinks'],
-                    "description" => $l['description'],
-                    "inhome" => $l['inhome'],
-                    "keywords" => $l['keywords'],
-                    "groups_view" => $l['groups_view'],
-                    'lev' => $l['lev']
-                );
-				/* $xtitle_i = '';
+					"catid" => $l['catid'],
+					"parentid" => $l['parentid'],
+					"title" => $l['title'],
+					"alias" => $l['alias'],
+					"viewcat" => $l['viewcat'],
+					"numsubcat" => $l['numsubcat'],
+					"subcatid" => $l['subcatid'],
+					"numlinks" => $l['numlinks'],
+					"description" => $l['description'],
+					"inhome" => $l['inhome'],
+					"keywords" => $l['keywords'],
+					"groups_view" => $l['groups_view'],
+					'lev' => $l['lev']
+				);
+				 $xtitle_i = '';
 				if( $l['lev'] > 0 )
 				{
 					for( $i = 1; $i <= $l['lev']; ++$i )
@@ -71,8 +105,9 @@ if( ! nv_function_exists( 'nv_block_shops_block_cat_tabs' ) )
 						$xtitle_i .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 					}
 				}
-				$html .= $xtitle_i . '<label><input type="checkbox" name="config_blockid[]" value="' . $l['catid'] . '" ' . ( ( in_array( $l['catid'], $data_block['blockid'] ) ) ? ' checked="checked"' : '' ) . '</input>' . $l[NV_LANG_DATA.'_title'] . '</label><br />'; */
-			}
+				$html .= $xtitle_i . '<label><input type="checkbox" name="config_blockid[]" value="' . $l['catid'] . '" ' . ( ( in_array( $l['catid'], $data_block['blockid'] ) ) ? ' checked="checked"' : '' ) . '</input>' . $l[NV_LANG_DATA.'_title'] . '</label><br />'; 
+			} */
+			$nvs_array_cat_shops = nvs_array_cat_shops($module, $lang_block);
 			foreach ($nvs_array_cat_shops as $cat) {
 				if ($cat['parentid'] == 0) {
 					if ($cat['inhome'] == '1') {
@@ -420,9 +455,10 @@ if( ! nv_function_exists( 'nv_block_shops_block_cat_tabs' ) )
 	}
 	function nv_block_shops_block_cat_tabs( $block_config )
 	{
-		global $nv_Cache, $shops_array_cat, $module_info, $site_mods, $module_config, $global_config, $db, $db_config, $lang_module;
+		global $nv_Cache, $shops_array_cat, $module_info, $site_mods, $module_config, $global_config, $db, $db_config, $lang_module, $nvs_array_cat_shops;
 
 		$module = $mod_data = $mod_file = $module_name = $module_data = $module_file = 'shops';
+		$nvs_array_cat_shops = nvs_array_cat_shops($module, $lang_block);
 		if( file_exists( NV_ROOTDIR . '/modules/' . $module_file . '/language/vi.php' ) )
 		{
 			require_once NV_ROOTDIR . '/modules/' . $module_file . '/language/vi.php';
@@ -483,7 +519,7 @@ if( ! nv_function_exists( 'nv_block_shops_block_cat_tabs' ) )
 			{
 				while( $l = $list->fetch() )
 				{
-					$l['link'] = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=shops&amp;' . NV_OP_VARIABLE . '=' . $shops_array_cat[$l['listcatid']]['alias'] . '/' . $l['alias'] . $global_config['rewrite_exturl'];
+					$l['link'] = NV_BASE_SITEURL . 'index.php?' . NV_LANG_VARIABLE . '=' . NV_LANG_DATA . '&amp;' . NV_NAME_VARIABLE . '=shops&amp;' . NV_OP_VARIABLE . '=' . $nvs_array_cat_shops[$l['listcatid']]['alias'] . '/' . $l['alias'] . $global_config['rewrite_exturl'];
 					if( $l['homeimgthumb'] == 1 )
 					{
 						$l['thumb'] = NV_BASE_SITEURL . NV_FILES_DIR . '/' . $site_mods[$module]['module_upload'] . '/' . $l['homeimgfile'];
